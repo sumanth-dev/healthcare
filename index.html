@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Management System/sumanth</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url("https://wallpapercave.com/wp/wp6938252.jpg");
+            background-size: cover;
+            color: white;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        .form-group input, .form-group button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .form-group button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #45a049;
+        }
+        h1, h2 {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Healthcare Management System</h1>
+        <div id="login">
+            <h2>Login</h2>
+            <div class="form-group">
+                <input type="text" id="username" placeholder="Enter user name">
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" placeholder="Enter the password">
+            </div>
+            <div class="form-group">
+                <button onclick="login()">Login</button>
+            </div>
+        </div>
+
+        <div id="menu" style="display:none;">
+            <h2>Welcome to Hospital</h2>
+            <div class="form-group">
+                <button onclick="showForm('patient')">Register Patient details</button>
+            </div>
+            <div class="form-group">
+                <button onclick="showForm('doctor')">Register Doctor details</button>
+            </div>
+            <div class="form-group">
+                <button onclick="showForm('worker')">Register Worker details</button>
+            </div>
+            <div class="form-group">
+                <button onclick="viewAll('patient')">View all patient details</button>
+            </div>
+            <div class="form-group">
+                <button onclick="viewAll('doctor')">View all doctor details</button>
+            </div>
+            <div class="form-group">
+                <button onclick="viewAll('worker')">View all worker details</button>
+            </div>
+            <div class="form-group">
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div id="form-container" style="display:none;">
+            <h2 id="form-title"></h2>
+            <div class="form-group">
+                <input type="text" id="name" placeholder="Name">
+            </div>
+            <div class="form-group">
+                <input type="number" id="age" placeholder="Age">
+            </div>
+            <div id="extra-fields"></div>
+            <div class="form-group">
+                <input type="tel" id="phone" placeholder="Phone number">
+            </div>
+            <div class="form-group">
+                <button onclick="register()">Submit</button>
+                <button onclick="backToMenu()">Back</button>
+            </div>
+        </div>
+
+        <div id="view-container" style="display:none;">
+            <h2 id="view-title"></h2>
+            <div id="view-content"></div>
+            <div class="form-group">
+                <button onclick="backToMenu()">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function login() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (username === 'sumanth' && password === 'sumanth@7989') {
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('menu').style.display = 'block';
+            } else {
+                alert('Wrong username or password.');
+            }
+        }
+
+        function logout() {
+            document.getElementById('login').style.display = 'block';
+            document.getElementById('menu').style.display = 'none';
+        }
+
+        function showForm(type) {
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('form-container').style.display = 'block';
+
+            const formTitle = `Register ${type.charAt(0).toUpperCase() + type.slice(1)} details`;
+            document.getElementById('form-title').innerText = formTitle;
+
+            const extraFields = document.getElementById('extra-fields');
+            extraFields.innerHTML = '';
+
+            if (type === 'patient') {
+                extraFields.innerHTML = '<input type="text" id="problems" placeholder="Problems">';
+            } else if (type === 'doctor') {
+                extraFields.innerHTML = '<input type="text" id="department" placeholder="Department">';
+            } else if (type === 'worker') {
+                extraFields.innerHTML = '<input type="text" id="workname" placeholder="Type of work">';
+            }
+
+            document.getElementById('form-container').setAttribute('data-type', type);
+        }
+
+        function validateInput(id, fieldName) {
+            const value = document.getElementById(id).value.trim();
+            if (!value) {
+                alert(`${fieldName} is required`);
+                return false;
+            }
+            return value;
+        }
+
+        function register() {
+            const type = document.getElementById('form-container').getAttribute('data-type');
+            const name = validateInput('name', 'Name');
+            const age = validateInput('age', 'Age');
+            const phone = validateInput('phone', 'Phone');
+            if (!name || !age || !phone) return;
+
+            let extra = '';
+            if (type === 'patient') {
+                extra = validateInput('problems', 'Problems');
+            } else if (type === 'doctor') {
+                extra = validateInput('department', 'Department');
+            } else if (type === 'worker') {
+                extra = validateInput('workname', 'Type of work');
+            }
+
+            alert(`${type.charAt(0).toUpperCase() + type.slice(1)} successfully registered:\nName: ${name}\nAge: ${age}\nPhone: ${phone}\n${type === 'patient' ? 'Problems' : type === 'doctor' ? 'Department' : 'Type of work'}: ${extra}`);
+            backToMenu();
+        }
+
+        function viewAll(type) {
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('view-container').style.display = 'block';
+
+            document.getElementById('view-title').innerText = `All ${type.charAt(0).toUpperCase() + type.slice(1)} Details`;
+            document.getElementById('view-content').innerHTML = '';
+
+            const exampleData = [
+                { name: 'sumanth ', age: 22, phone: '7989000000', details: type === 'patient' ? 'Flu' : type === 'doctor' ? 'Cardiology' : 'Cleaner' }
+            ];
+
+            exampleData.forEach(record => {
+                const div = document.createElement('div');
+                div.innerText = `Name: ${record.name}, Age: ${record.age}, Phone: ${record.phone}, ${type === 'patient' ? 'Problems' : type === 'doctor' ? 'Department' : 'Type of work'}: ${record.details}`;
+                document.getElementById('view-content').appendChild(div);
+            });
+        }
+
+        function backToMenu() {
+            document.getElementById('form-container').style.display = 'none';
+            document.getElementById('view-container').style.display = 'none';
+            document.getElementById('menu').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
